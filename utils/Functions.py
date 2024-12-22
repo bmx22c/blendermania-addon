@@ -88,8 +88,13 @@ def get_documents_path() -> str:
 # windows filepaths can not be longer than 260chars, 
 # allow 32.000+ by adding this to path, like //?/C:/Users/<500 random chars>/myfile.txt
 def long_path(path: str) -> str:
-    path = re.sub(r"/+|\\+", r"\\", path)
-    path = EXCEED_260_PATH_LIMIT + path
+    if platform.system() == 'Windows':
+        path = re.sub(r"/+|\\+", r"\\", path)
+        path = EXCEED_260_PATH_LIMIT + path
+    # else:
+        
+    # path = re.sub(r"/+|\\+", r"\\", path)
+    # path = EXCEED_260_PATH_LIMIT + path
     return path
 
 
@@ -524,13 +529,34 @@ def get_installed_nadeoimporter_version() -> str:
     if is_selected_nadeoini_file_name_ok():
         imp_path =get_nadeo_importer_path()
         if is_file_existing(imp_path):
-            process  = subprocess.Popen([
-                f"""powershell.exe""",
-                f"""(Get-Item "{imp_path}").VersionInfo.FileVersion"""
-            ], stdout=subprocess.PIPE)
-            result  = process.communicate()
-            version = result[0].decode("ascii")
-            version = version.replace("\r\n",  "")
+            if platform.system() == "Windows":
+                process  = subprocess.Popen([
+                    f"""powershell.exe""",
+                    f"""(Get-Item "{imp_path}").VersionInfo.FileVersion"""
+                ], stdout=subprocess.PIPE)
+
+                result  = process.communicate()
+                version = result[0].decode("ascii")
+                version = version.replace("\r\n",  "")
+            else:
+                # exiftool required
+                # sudo apt install libimage-exiftool-perl
+                # exiftool -FileVersion /home/bmx22c/.steam/steam/steamapps/common/Trackmania/NadeoImporter.exe | awk -F': ' '{print $2}'
+                process = subprocess.Popen([
+                    "exiftool",
+                    "-FileVersion",
+                    imp_path
+                    # " | awk -F': ' '{print $2}'"
+                ], stdout=subprocess.PIPE)
+
+                result  = process.communicate()
+                version = result[0].decode("ascii")
+                match = re.search(r':\s*([\d.]+)', version)
+                if match:
+                    version = match.group(1)
+                else:
+                    return 'None'
+            
             version = datetime.strptime(version, "%Y.%m.%d.%H%M").strftime("%Y_%m_%d")
     return version
     
