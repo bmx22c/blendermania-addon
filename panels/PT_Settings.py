@@ -123,6 +123,10 @@ class TM_PT_Settings(Panel):
         row.prop(tm_props, ini, text="Ini file")
         row.operator("view3d.tm_autofindnadeoini", text="", icon=ICON_SEARCH)
 
+        row = col.row(align=True)
+        row.enabled = True if not tm_props.CB_converting else False
+        row.prop(tm_props, "LI_system", text="System")
+
         nadeoini_invalid = draw_nadeoini_required_message(self)
         if nadeoini_invalid:
             return

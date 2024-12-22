@@ -129,6 +129,25 @@ def getGameTypes()->list:
         desc = GAMETYPE_TRACKMANIA2020,
         icon = get_addon_icon(GAMETYPE_TRACKMANIA2020)
     ).to_list()
+
+
+def getSystems()->list:
+    return EnumProps().add(
+        id   = SYSTEM_WINDOWS,
+        name = SYSTEM_WINDOWS,
+        desc = SYSTEM_WINDOWS,
+        icon = get_addon_icon(SYSTEM_WINDOWS)
+    ).add(
+        id   = SYSTEM_LINUX,
+        name = SYSTEM_LINUX,
+        desc = SYSTEM_LINUX,
+        icon = get_addon_icon(SYSTEM_LINUX)
+    ).add(
+        id   = SYSTEM_MACOS,
+        name = SYSTEM_MACOS,
+        desc = SYSTEM_MACOS,
+        icon = get_addon_icon(SYSTEM_MACOS)
+    ).to_list()
     
 
 
