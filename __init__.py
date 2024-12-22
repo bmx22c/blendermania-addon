@@ -338,7 +338,7 @@ def unregister():
     except:
         pass
 
-    NICE_unregister()
+    # NICE_unregister()
 
 @persistent
 def on_save(what, idontknow) -> None: # on quit?
