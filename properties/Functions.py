@@ -176,6 +176,32 @@ def gameTypeGotUpdated(self=None,context=None)->None:
 
     return None
 
+def systemGotUpdated(self=None,context=None)->None:
+    tm_props     = get_global_props()
+    tm_props = tm_props
+    if(tm_props.LI_system == "Windows"):
+        PATH_DESKTOP           = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') + "/"
+        PATH_PROGRAM_DATA      = os.environ.get("ALLUSERSPROFILE").replace("\\", "/")   + "/"
+        PATH_PROGRAM_FILES     = os.environ.get("PROGRAMFILES").replace("\\", "/") + "/"
+        PATH_PROGRAM_FILES_X86 = os.environ.get("PROGRAMFILES(X86)", "").replace("\\", "/") + "/"
+    else:
+        computeFolders()
+    
+    gameTypeGotUpdated()
+
+
+def computeFolders(self=None,context=None)->None:
+    tm_props     = get_global_props()
+    tm_props = tm_props
+    if(tm_props.LI_system == "Windows" and tm_props.ST_compatData_driveC != ""):
+        root_folder = tm_props.ST_compatData_driveC
+
+        PATH_PROGRAM_DATA      = os.path.join(root_folder, "ProgramData") + "/"
+        PATH_PROGRAM_FILES     = os.path.join(root_folder, "Program Files") + "/"
+        PATH_PROGRAM_FILES_X86 = os.path.join(root_folder, "Program Files (x86)") + "/"
+    
+    gameTypeGotUpdated()
+
 
 def get_grid_helper_area_sizes_xy()->list:
     return EnumProps()\

@@ -181,30 +181,11 @@ MSG_ERROR_NADEO_INI_NOT_FOUND           = """Autofind failed, check "Help" """
 
 
 # Path related
-# PATH_DESKTOP               = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') + "/"
-if platform.system() == 'Windows':
-    PATH_DESKTOP = os.path.join(os.environ['USERPROFILE'], 'Desktop') + "/"
-else:
-    PATH_DESKTOP = os.path.join(os.path.expanduser("~"), 'Desktop') + "/"
-
-PATH_HOME                  = os.path.expanduser("~").replace("\\", "/") + "/"
-# PATH_PROGRAM_DATA          = os.environ.get("ALLUSERSPROFILE").replace("\\", "/")   + "/"
-if platform.system() == 'Windows':
-    PATH_ALL_USERS = os.environ.get("ALLUSERSPROFILE").replace("\\", "/") + "/"
-else:
-    PATH_ALL_USERS = "/etc/"
-
-# PATH_PROGRAM_FILES         = os.environ.get("PROGRAMFILES").replace("\\", "/")      + "/"
-if platform.system() == 'Windows':
-    PATH_PROGRAM_FILES = os.environ.get("PROGRAMFILES").replace("\\", "/") + "/"
-else:
-    PATH_PROGRAM_FILES = "/usr/local/"
-
-# PATH_PROGRAM_FILES_X86     = os.environ.get("PROGRAMFILES(X86)").replace("\\", "/") + "/"
-if platform.system() == 'Windows':
-    PATH_PROGRAM_FILES_X86 = os.environ.get("PROGRAMFILES(X86)", "").replace("\\", "/") + "/"
-else:
-    PATH_PROGRAM_FILES_X86 = "/usr/lib32/"
+PATH_HOME              = os.path.expanduser("~").replace("\\", "/") + "/"
+PATH_DESKTOP           = ""
+PATH_PROGRAM_DATA      = ""
+PATH_PROGRAM_FILES     = ""
+PATH_PROGRAM_FILES_X86 = ""
 
 PATH_CONVERT_REPORT        = PATH_HOME + "convert_report.html"
 PATH_DEFAULT_SETTINGS_JSON = PATH_HOME + "blender_addon_for_tm2020_maniaplanet_settings.json"

@@ -73,12 +73,17 @@ def get_game() -> str:
     return get_global_props().LI_gameType
 
 def get_documents_path() -> str:
-    process = subprocess.Popen([
-        """Powershell.exe""",
-        """[environment]::getfolderpath("mydocuments")"""
-    ], stdout=subprocess.PIPE)
-    result  = process.communicate() # (b"C:\Users\User\Documents\r\n", None)
-    path = result[0].decode("ascii").replace("\r\n",  "") 
+    tm_props = get_global_props()
+    if(tm_props.LT_system == "Windows"):
+        process = subprocess.Popen([
+            """Powershell.exe""",
+            """[environment]::getfolderpath("mydocuments")"""
+        ], stdout=subprocess.PIPE)
+        result  = process.communicate() # (b"C:\Users\User\Documents\r\n", None)
+        path = result[0].decode("ascii").replace("\r\n",  "") 
+    else:
+        path = os.path.join(tm_props.ST_compatData_driveC, "users", "steamuser", "Documents")
+    
     debug(path)
     return fix_slash(path)
     
@@ -879,7 +884,10 @@ def save_blend_file_as(filepath: str) -> bool:
 
 
 def get_game_doc_path() -> str:
-    return get_nadeo_init_data(setting="UserDir")
+    if platform.system() == "Windows":
+        return get_nadeo_init_data(setting="UserDir")
+    else:
+        return get_nadeo_init_data(setting="UserDir").replace("{userdir}", "")
 
 
 

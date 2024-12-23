@@ -127,6 +127,13 @@ class TM_PT_Settings(Panel):
         row.enabled = True if not tm_props.CB_converting else False
         row.prop(tm_props, "LI_system", text="System")
 
+        if(tm_props.LI_system != "Windows"):
+            row = col.row(align=True)
+            row.prop(tm_props, "ST_compatData_driveC", text="compatdata drive_c")
+
+            # row = col.row(align=True)
+            # row.prop(tm_props, "LI_programFilesx86", text="Program Files x86 folder")
+
         nadeoini_invalid = draw_nadeoini_required_message(self)
         if nadeoini_invalid:
             return

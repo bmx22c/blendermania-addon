@@ -32,7 +32,8 @@ def _set_ST_materialAddName_when_select_link(self, context):
 class PannelsPropertyGroup(bpy.types.PropertyGroup):
     """general trackmania properties"""
     LI_gameType                 : EnumProperty(  name="Game",    items=getGameTypes(),   update=gameTypeGotUpdated)
-    LI_system                   : EnumProperty(  name="System",  items=getSystems(),     update=gameTypeGotUpdated)
+    LI_system                   : EnumProperty(  name="System",  items=getSystems(),     update=systemGotUpdated)
+    ST_compatData_driveC        : StringProperty(name="compatdata drive_c", description="Steam compatdata C drive folder", subtype="DIR_PATH",     update=computeFolders)
     ST_nadeoIniFile_MP          : StringProperty(name="",        subtype="FILE_PATH",    update=lambda s, c: updateINI("ST_nadeoIniFile_MP"), default=defaultINI("ST_nadeoIniFile_MP"))
     ST_nadeoIniFile_TM          : StringProperty(name="",        subtype="FILE_PATH",    update=lambda s, c: updateINI("ST_nadeoIniFile_TM"), default=defaultINI("ST_nadeoIniFile_TM"))
     ST_author                   : StringProperty(name="Author",  default="")
