@@ -14,6 +14,7 @@ import os
 from struct import pack, pack_into, unpack_from, calcsize
 from collections import namedtuple
 import zipfile
+import shutil
 
 HeaderChunk = namedtuple("HeaderChunk", ["id", "size"])
 
@@ -243,9 +244,61 @@ class ItemConvert(threading.Thread):
     def convert_item_gbx(self) -> None:
         """convert fbx to item.gbx"""
         self.add_progress_step(f"""Convert .fbx => .Item.gbx""")
+        tm_props = get_global_props()
         
         # ex: "NadeoImporter.exe" Item "/Items/myblock.Item.xml"
-        cmd = f""""{get_nadeo_importer_path()}" Item "{self.xml_item_filepath_relative}" """ 
+        cmd = []
+        filepathRelative = ""
+        if(tm_props.LI_system == "Windows"):
+            filepathRelative = self.xml_item_filepath_relative
+            cmd = [get_nadeo_importer_path(), "Item", filepathRelative]
+        else:
+            filepathRelative = self.xml_item_filepath_relative.replace("/", "\\")
+            cmd = ["wine", get_nadeo_importer_path(), "Item", filepathRelative]
+        
+        # cmd = f""""{get_nadeo_importer_path()}" Item "{filepathRelative}" """ 
+            
+        
+        if(tm_props.LI_system != "Windows"):
+            # the NadeoImporter.exe will try to look under ~/Documents/Trackmania
+            # which is incorrect. I couldn't find any other technique so
+            # I'll ask the user if the folder already exists if I can rename it to "Trackmania_backup"
+            # so that I can symlink to the correct folder instead.
+
+            trackmania_path = os.path.expanduser("~/Documents/Trackmania")
+            backup_path = os.path.expanduser("~/Documents/Trackmania_backup")
+
+            needsSymlink = False
+
+            # Check if Trackmania folder exists
+            if os.path.exists(trackmania_path):
+                #Check if folder is symlink
+                if not os.path.islink(trackmania_path):
+                    needsSymlink = True
+                    # Check if backup folder exists
+                    if os.path.exists(backup_path):
+                        raise FileExistsError(f"The folder '{backup_path}' already exists. Cannot rename '{trackmania_path}'.")
+                        return
+                    else:
+                        # Rename the folder
+                        shutil.move(trackmania_path, backup_path)
+                        print(f"Renamed '{trackmania_path}' to '{backup_path}'.")
+            else:
+                needsSymlink = True
+                print(f"The folder '{trackmania_path}' does not exist.")
+
+            if(needsSymlink):
+                # ln -s /home/bmx22c/.steam/steam/steamapps/compatdata/2225070/pfx/drive_c/users/steamuser/Documents/Trackmania/Work /home/bmx22c/Documents/Trackmania
+                # TODO use func to get real TM folder
+                process = subprocess.Popen([
+                    "ln", "-s",
+                    os.path.join(tm_props.ST_compatData_driveC, "users", "steamuser", "Documents", "Trackmania"),
+                    os.path.join(os.path.expanduser("~"), "Documents", "Trackmania")
+                ], stdout=subprocess.PIPE)
+                result  = process.communicate()
+            
+            # cmd = ["wine", cmd]
+
         self.add_progress_step(f"""Command: {cmd}""")
 
         convert_process  = subprocess.Popen(cmd, stdout=subprocess.PIPE)
