@@ -64,7 +64,11 @@ def get_blendermania_dotnet_path() -> str:
     #if BLENDER_INSTANCE_IS_DEV:
     #    return fr"D:\Art\Blender\blendermania-dotnet\blendermania-dotnet\bin\Release\net7.0\win-x64\publish\blendermania-dotnet.exe"
     #else:
-    return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}.exe"
+    tm_props = get_global_props()
+    if(tm_props.LI_system == "Windows"):
+        return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}.exe"
+    else:
+        return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}"
 
 def is_blendermania_dotnet_installed() -> bool:
     return is_file_existing(get_blendermania_dotnet_path())
@@ -734,7 +738,7 @@ def install_blendermania_dotnet()->None:
     progressbar = "NU_DL_Progress"
 
     def on_success():
-        delete_files_by_wildcard(f"{extract_to}/Blendermania_Dotnet*.exe")
+        delete_files_by_wildcard(f"{extract_to}/Blendermania_Dotnet*", ".zip")
 
         tm_props.CB_DL_ProgressRunning = False
         unzip_file_into(file_path, extract_to)
@@ -2223,12 +2227,16 @@ def is_obj_visible_by_name(name: str) -> bool:
     return  not name.startswith("_")\
             or name.startswith(SPECIAL_NAME_PREFIX_NOTCOLLIDABLE)
 
-def delete_files_by_wildcard(wildcard: str):
+def delete_files_by_wildcard(wildcard: str, exclude_end_with: str):
     fileList = glob.glob(wildcard)
     # Iterate over the list of filepaths & remove each file.
     for filePath in fileList:
         try:
-            os.remove(filePath)
+            if(exclude_end_with != "" and exclude_end_with is not None):
+                if not (filePath.endswith(exclude_end_with)):
+                    os.remove(filePath)
+            else:
+                os.remove(filePath)
         except:
             print("Error while deleting file : ", filePath)
 

@@ -274,15 +274,12 @@ def run_place_mediatracker_clips_on_map(
 
 def _run_dotnet(command: str, payload: str) -> DotnetExecResult:
     #print(payload)
-    dotnet_exe = get_blendermania_dotnet_path()
+    dotnet = get_blendermania_dotnet_path()
     args = [
-        dotnet_exe,
+        dotnet,
         command,
         payload.strip('"'),
     ]
-    tm_props = get_global_props()
-    if(tm_props.LI_system != "Windows"):
-        args.insert(0, "wine")
 
     process = subprocess.Popen(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
