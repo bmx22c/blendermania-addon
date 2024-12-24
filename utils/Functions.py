@@ -1811,7 +1811,11 @@ def debug(*args, pp=False, raw=False, add_to_list=False, save_list_to=None, clea
         with open(fix_slash(save_list_to), "w") as f:
             f.write(debug_list)
         if open_file:
-            p = subprocess.Popen(f"notepad {save_list_to}")
+            tm_props = get_global_props()
+            if(tm_props.LI_system == "Windows"):
+                p = subprocess.Popen(f"notepad {save_list_to}")
+            else:
+                p = subprocess.Popen(["xdg-open", save_list_to])
 
     if clear_list:
         debug_list = ""
