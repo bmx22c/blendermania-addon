@@ -428,7 +428,11 @@ def open_url(url: str) -> None:
     webbrowser.open(url)
 
 def open_convert_report() -> None:
-    subprocess.Popen(['start', fix_slash(PATH_CONVERT_REPORT)], shell=True)
+    tm_props = get_global_props()
+    if(tm_props.LI_system == "Windows"):
+        subprocess.Popen(['start', fix_slash(PATH_CONVERT_REPORT)], shell=True)
+    else:
+        subprocess.Popen(["xdg-open", PATH_CONVERT_REPORT], stdout=subprocess.PIPE)
 
 
 
