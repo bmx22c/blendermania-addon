@@ -64,7 +64,11 @@ def get_blendermania_dotnet_path() -> str:
     #if BLENDER_INSTANCE_IS_DEV:
     #    return fr"D:\Art\Blender\blendermania-dotnet\blendermania-dotnet\bin\Release\net7.0\win-x64\publish\blendermania-dotnet.exe"
     #else:
-    return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}.exe"
+    tm_props = get_global_props()
+    if(tm_props.LI_system == "Windows"):
+        return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}.exe"
+    else:
+        return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}"
 
 def is_blendermania_dotnet_installed() -> bool:
     return is_file_existing(get_blendermania_dotnet_path())
@@ -74,7 +78,7 @@ def get_game() -> str:
 
 def get_documents_path() -> str:
     tm_props = get_global_props()
-    if(tm_props.LT_system == "Windows"):
+    if(tm_props.LI_system == "Windows"):
         process = subprocess.Popen([
             """Powershell.exe""",
             """[environment]::getfolderpath("mydocuments")"""
@@ -231,12 +235,18 @@ def parse_nadeo_ini_file() -> str:
     ini_filepath = get_nadeo_ini_path()
     ini_data = configparser.ConfigParser()
     ini_data.read(ini_filepath)
+
+    tm_props = get_global_props()
     
     debug("start parsing nadeo.ini file")
 
     for setting in possible_settings:
         if setting not in nadeo_ini_settings.keys():
-            nadeo_ini_settings[setting] = ini_data.get(category, setting) #ex: ManiaPlanet, UserDir
+            if(tm_props.LI_system == "Windows"):
+                nadeo_ini_settings[setting] = ini_data.get(category, setting) #ex: ManiaPlanet, UserDir
+            else:
+                nadeo_ini_settings[setting] = ini_data.get(category, setting).replace("\\", "/") #ex: ManiaPlanet, UserDir
+
     
     for ini_key, ini_value in nadeo_ini_settings.items():
         
@@ -259,9 +269,9 @@ def parse_nadeo_ini_file() -> str:
             debug("UserDir has a variable, fix:")
             search    = r"\{userdocs\}|\{userdir\}"
             replace   = get_documents_path()
-            from_value= ini_value.lower()
+            from_value= ini_value
             new_docpath     = re.sub(search, replace, from_value, re.IGNORECASE)
-            path_tmuf       = re.sub("trackmania", "TrackMania2020", new_docpath, flags=re.IGNORECASE)
+            path_tmuf       = re.sub("Trackmania", "TrackMania", new_docpath, flags=re.IGNORECASE)
 
             new_docpath = fix_slash(new_docpath)
             path_tmuf   = fix_slash(path_tmuf)
@@ -728,7 +738,7 @@ def install_blendermania_dotnet()->None:
     progressbar = "NU_DL_Progress"
 
     def on_success():
-        delete_files_by_wildcard(f"{extract_to}/Blendermania_Dotnet*.exe")
+        delete_files_by_wildcard(f"{extract_to}/Blendermania_Dotnet*", ".zip")
 
         tm_props.CB_DL_ProgressRunning = False
         unzip_file_into(file_path, extract_to)
@@ -1805,7 +1815,11 @@ def debug(*args, pp=False, raw=False, add_to_list=False, save_list_to=None, clea
         with open(fix_slash(save_list_to), "w") as f:
             f.write(debug_list)
         if open_file:
-            p = subprocess.Popen(f"notepad {save_list_to}")
+            tm_props = get_global_props()
+            if(tm_props.LI_system == "Windows"):
+                p = subprocess.Popen(f"notepad {save_list_to}")
+            else:
+                p = subprocess.Popen(["xdg-open", save_list_to])
 
     if clear_list:
         debug_list = ""
@@ -2021,24 +2035,35 @@ def show_windows_toast(title: str, text: str, baloon_icon: str="Info", duration:
     if baloon_icon not in {"None", "Info", "Warning", "Error"}:
         raise ValueError
 
+    tm_props = get_global_props()
+
     icon = "MANIAPLANET.ico" if is_game_maniaplanet() else "TRACKMANIA2020.ico"
     icon = get_addon_icon_path(icon)
 
-    assetpath = fix_slash( get_addon_assets_path() + "/misc/" )
-    cmd = [
-        "PowerShell", 
-        "-File",        f"""{assetpath}/make_toast.ps1""", 
-        "-Title",       title, 
-        "-Message",     text,
-        "-Icon",        icon,
-        "-BaloonIcon",  baloon_icon,
-        "-Duration",    str(duration),
-    ]
-    try:
+    if(tm_props.LI_system == "Windows"):
+        assetpath = fix_slash( get_addon_assets_path() + "/misc/" )
+        cmd = [
+            "PowerShell", 
+            "-File",        f"""{assetpath}/make_toast.ps1""", 
+            "-Title",       title, 
+            "-Message",     text,
+            "-Icon",        icon,
+            "-BaloonIcon",  baloon_icon,
+            "-Duration",    str(duration),
+        ]
+        try:
+            subprocess.call(cmd)
+        except Exception as e:
+            show_report_popup("Executing powershell scripts(ps1) is disabled on your system...")
+            pass # execute ps1 scripts can be disabled in windows
+    else:
+        cmd = [
+            "notify-send",
+            "-t", str(duration),
+            "-i", icon,
+            title, text
+        ]
         subprocess.call(cmd)
-    except Exception as e:
-        show_report_popup("Executing powershell scripts(ps1) is disabled on your system...")
-        pass # execute ps1 scripts can be disabled in windows
 
 
 def show_report_popup(title=str("some error occured"), infos: tuple=(), icon: str='INFO'):
@@ -2202,12 +2227,16 @@ def is_obj_visible_by_name(name: str) -> bool:
     return  not name.startswith("_")\
             or name.startswith(SPECIAL_NAME_PREFIX_NOTCOLLIDABLE)
 
-def delete_files_by_wildcard(wildcard: str):
+def delete_files_by_wildcard(wildcard: str, exclude_end_with: str):
     fileList = glob.glob(wildcard)
     # Iterate over the list of filepaths & remove each file.
     for filePath in fileList:
         try:
-            os.remove(filePath)
+            if(exclude_end_with != "" and exclude_end_with is not None):
+                if not (filePath.endswith(exclude_end_with)):
+                    os.remove(filePath)
+            else:
+                os.remove(filePath)
         except:
             print("Error while deleting file : ", filePath)
 

@@ -47,6 +47,12 @@ def set_icon(item_path, icon_path):
     
     icon_chunk = get_icon_chunk(icon_path)
 
+    if not (os.path.exists(item_path)):
+        if (os.path.exists(item_path.replace("Item.Gbx", "Item.gbx"))):
+            item_path = item_path.replace("Item.Gbx", "Item.gbx")
+        else:
+            return
+
     with open(item_path, "r+b") as f_item:
         # read item file
         item_data = f_item.read()

@@ -274,13 +274,14 @@ def run_place_mediatracker_clips_on_map(
 
 def _run_dotnet(command: str, payload: str) -> DotnetExecResult:
     #print(payload)
-    dotnet_exe = get_blendermania_dotnet_path()
-
-    process = subprocess.Popen(args=[
-        dotnet_exe,
+    dotnet = get_blendermania_dotnet_path()
+    args = [
+        dotnet,
         command,
         payload.strip('"'),
-    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    ]
+
+    process = subprocess.Popen(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     out, err = process.communicate()
     if len(err) != 0:
