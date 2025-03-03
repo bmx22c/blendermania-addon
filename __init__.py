@@ -360,7 +360,10 @@ def on_startup(dummy) -> None:
         tm_props.NU_DL_Progress         = 0
         tm_props.ST_DL_ProgressErrors   = ""
         tm_props.CB_DL_ProgressShow     = False
-
+        if(os.name == "nt"):
+            tm_props.LI_system = "Windows"
+        else:
+            tm_props.LI_system = "Linux"
 
         # so grid_subdivisions is editable
         bpy.context.scene.unit_settings.system = 'NONE'

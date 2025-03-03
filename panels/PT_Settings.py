@@ -1,5 +1,6 @@
 from pydoc import text
 import bpy
+import os
 from bpy.types import Panel
 
 from ..operators.OT_Settings import TM_OT_Settings_OpenMessageBox
@@ -125,7 +126,7 @@ class TM_PT_Settings(Panel):
 
         row = col.row(align=True)
         row.enabled = True if not tm_props.CB_converting else False
-        row.prop(tm_props, "LI_system", text="System")
+        # row.prop(tm_props, "LI_system", text="System")
 
         if(tm_props.LI_system != "Windows"):
             row = col.row(align=True)
