@@ -269,9 +269,9 @@ def parse_nadeo_ini_file() -> str:
             debug("UserDir has a variable, fix:")
             search    = r"\{userdocs\}|\{userdir\}"
             replace   = get_documents_path()
-            from_value= ini_value
+            from_value= ini_value.lower()
             new_docpath     = re.sub(search, replace, from_value, re.IGNORECASE)
-            path_tmuf       = re.sub("Trackmania", "TrackMania", new_docpath, flags=re.IGNORECASE)
+            path_tmuf       = re.sub("trackmania", "TrackMania2020", new_docpath, flags=re.IGNORECASE)
 
             new_docpath = fix_slash(new_docpath)
             path_tmuf   = fix_slash(path_tmuf)
