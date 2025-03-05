@@ -126,9 +126,8 @@ class TM_PT_Settings(Panel):
 
         row = col.row(align=True)
         row.enabled = True if not tm_props.CB_converting else False
-        # row.prop(tm_props, "LI_system", text="System")
 
-        if(tm_props.LI_system != "Windows"):
+        if(get_system() == "Unix"):
             row = col.row(align=True)
             row.prop(tm_props, "ST_compatData_driveC", text="compatdata drive_c")
 
@@ -148,7 +147,7 @@ class TM_PT_Settings_BlenderRelated(Panel):
 
     @classmethod
     def poll(self, context):
-        return is_selected_nadeoini_file_name_ok()
+        return is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled()
     
     def draw(self, context):
 
@@ -190,7 +189,7 @@ class TM_PT_Settings_NadeoImporter(Panel):
     
     @classmethod
     def poll(self, context):
-        return is_selected_nadeoini_file_name_ok()
+        return is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled()
     
     def draw_header_preset(self, context):
         layout = self.layout
@@ -219,7 +218,7 @@ class TM_PT_Settings_NadeoImporter(Panel):
             draw_nadeoini_required_message(self)
             return
 
-        if is_selected_nadeoini_file_name_ok():
+        if is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled():
             op_row = layout.row()
             op_row.enabled = tm_props.CB_nadeoImporterDLRunning is False
             op_row.scale_y = 1.5
@@ -306,7 +305,7 @@ class TM_PT_Settings_Performance(Panel):
     
     @classmethod
     def poll(self, context):
-        return is_selected_nadeoini_file_name_ok()    
+        return is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled()
     
     def draw(self, context):
 

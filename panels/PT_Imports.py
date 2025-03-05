@@ -16,7 +16,7 @@ class TM_PT_Imports(Panel):
 
     @classmethod
     def poll(self, context):
-        return is_selected_nadeoini_file_name_ok()
+        return is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled()
 
     def draw_header(self, context):
         layout = self.layout

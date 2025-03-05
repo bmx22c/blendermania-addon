@@ -65,7 +65,7 @@ def get_blendermania_dotnet_path() -> str:
     #    return fr"D:\Art\Blender\blendermania-dotnet\blendermania-dotnet\bin\Release\net7.0\win-x64\publish\blendermania-dotnet.exe"
     #else:
     tm_props = get_global_props()
-    if(tm_props.LI_system == "Windows"):
+    if(get_system() == "Windows"):
         return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}.exe"
     else:
         return get_addon_path() + f"assets/{BLENDERMANIA_DOTNET}"
@@ -78,7 +78,7 @@ def get_game() -> str:
 
 def get_documents_path() -> str:
     tm_props = get_global_props()
-    if(tm_props.LI_system == "Windows"):
+    if(get_system() == "Windows"):
         process = subprocess.Popen([
             """Powershell.exe""",
             """[environment]::getfolderpath("mydocuments")"""
@@ -242,7 +242,7 @@ def parse_nadeo_ini_file() -> str:
 
     for setting in possible_settings:
         if setting not in nadeo_ini_settings.keys():
-            if(tm_props.LI_system == "Windows"):
+            if(get_system() == "Windows"):
                 nadeo_ini_settings[setting] = ini_data.get(category, setting) #ex: ManiaPlanet, UserDir
             else:
                 nadeo_ini_settings[setting] = ini_data.get(category, setting).replace("\\", "/") #ex: ManiaPlanet, UserDir
@@ -541,7 +541,7 @@ def unzip_nadeoimporter(zipfilepath)->None:
 
 def get_installed_nadeoimporter_version() -> str:
     version  = "None"
-    if is_selected_nadeoini_file_name_ok():
+    if is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled():
         imp_path =get_nadeo_importer_path()
         if is_file_existing(imp_path):
             if platform.system() == "Windows":
@@ -1816,7 +1816,7 @@ def debug(*args, pp=False, raw=False, add_to_list=False, save_list_to=None, clea
             f.write(debug_list)
         if open_file:
             tm_props = get_global_props()
-            if(tm_props.LI_system == "Windows"):
+            if(get_system() == "Windows"):
                 p = subprocess.Popen(f"notepad {save_list_to}")
             else:
                 p = subprocess.Popen(["xdg-open", save_list_to])
@@ -2040,7 +2040,7 @@ def show_windows_toast(title: str, text: str, baloon_icon: str="Info", duration:
     icon = "MANIAPLANET.ico" if is_game_maniaplanet() else "TRACKMANIA2020.ico"
     icon = get_addon_icon_path(icon)
 
-    if(tm_props.LI_system == "Windows"):
+    if(get_system() == "Windows"):
         assetpath = fix_slash( get_addon_assets_path() + "/misc/" )
         cmd = [
             "PowerShell", 
@@ -2293,3 +2293,10 @@ def get_system() -> str:
             return "Windows"
         else:
             return "Unix"
+        
+def is_compat_c_needed_and_filled() -> bool:
+    tm_props = get_global_props()
+    if(get_system() == "Windows"):
+        return True
+    else:
+        return tm_props.ST_compatData_driveC != ""

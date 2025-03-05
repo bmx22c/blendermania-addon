@@ -129,25 +129,6 @@ def getGameTypes()->list:
         desc = GAMETYPE_TRACKMANIA2020,
         icon = get_addon_icon(GAMETYPE_TRACKMANIA2020)
     ).to_list()
-
-
-def getSystems()->list:
-    return EnumProps().add(
-        id   = SYSTEM_WINDOWS,
-        name = SYSTEM_WINDOWS,
-        desc = SYSTEM_WINDOWS,
-        icon = get_addon_icon(SYSTEM_WINDOWS)
-    ).add(
-        id   = SYSTEM_LINUX,
-        name = SYSTEM_LINUX,
-        desc = SYSTEM_LINUX,
-        icon = get_addon_icon(SYSTEM_LINUX)
-    ).add(
-        id   = SYSTEM_MACOS,
-        name = SYSTEM_MACOS,
-        desc = SYSTEM_MACOS,
-        icon = get_addon_icon(SYSTEM_MACOS)
-    ).to_list()
     
 
 
@@ -177,9 +158,7 @@ def gameTypeGotUpdated(self=None,context=None)->None:
     return None
 
 def systemGotUpdated(self=None,context=None)->None:
-    tm_props     = get_global_props()
-    tm_props = tm_props
-    if(tm_props.LI_system == "Windows"):
+    if(get_system() == "Windows"):
         PATH_DESKTOP           = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') + "/"
         PATH_PROGRAM_DATA      = os.environ.get("ALLUSERSPROFILE").replace("\\", "/")   + "/"
         PATH_PROGRAM_FILES     = os.environ.get("PROGRAMFILES").replace("\\", "/") + "/"
@@ -193,7 +172,7 @@ def systemGotUpdated(self=None,context=None)->None:
 def computeFolders(self=None,context=None)->None:
     tm_props     = get_global_props()
     tm_props = tm_props
-    if(tm_props.LI_system == "Windows" and tm_props.ST_compatData_driveC != ""):
+    if(get_system() == "Windows" and tm_props.ST_compatData_driveC != ""):
         root_folder = tm_props.ST_compatData_driveC
 
         PATH_PROGRAM_DATA      = os.path.join(root_folder, "ProgramData") + "/"

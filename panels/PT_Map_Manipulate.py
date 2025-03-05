@@ -19,6 +19,7 @@ from ..utils.Functions import (
     is_blendermania_dotnet_installed,
     is_game_maniaplanet,
     is_selected_nadeoini_file_name_ok,
+    is_compat_c_needed_and_filled,
 )
 from ..utils.Constants import * 
 from ..operators.OT_WikiLink import add_ui_wiki_icon
@@ -33,7 +34,7 @@ class PT_UIMapManipulation(bpy.types.Panel):
 
     @classmethod
     def poll(self, context):
-        return is_selected_nadeoini_file_name_ok()
+        return is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled()
 
 
     def draw_header(self, context):

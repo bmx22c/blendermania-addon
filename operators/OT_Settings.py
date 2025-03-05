@@ -416,7 +416,7 @@ def installUvPackerAddon() -> None:
 
 def open_folder(folder_abs: str) -> None:
     tm_props = get_global_props()
-    if(tm_props.LI_system == "Windows"):
+    if(get_system() == "Windows"):
         cmd = f"""explorer "{folder_abs}" """
         cmd = cmd.replace("/", "\\")
         cmd = cmd.replace("\\\\", "\\")
@@ -431,7 +431,7 @@ def open_url(url: str) -> None:
 
 def open_convert_report() -> None:
     tm_props = get_global_props()
-    if(tm_props.LI_system == "Windows"):
+    if(get_system() == "Windows"):
         subprocess.Popen(['start', fix_slash(PATH_CONVERT_REPORT)], shell=True)
     else:
         subprocess.Popen(["xdg-open", PATH_CONVERT_REPORT], stdout=subprocess.PIPE)

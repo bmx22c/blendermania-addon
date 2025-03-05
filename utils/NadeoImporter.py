@@ -16,6 +16,8 @@ from collections import namedtuple
 import zipfile
 import shutil
 
+from ..utils.Functions      import *
+
 HeaderChunk = namedtuple("HeaderChunk", ["id", "size"])
 
 class BinaryReader:
@@ -264,7 +266,7 @@ class ItemConvert(threading.Thread):
 
         cmd = []
         filepathRelative = ""
-        if(tm_props.LI_system == "Windows"):
+        if(get_system() == "Windows"):
             filepathRelative = self.fbx_filepath_relative
             cmd = [get_nadeo_importer_path(), "Mesh", filepathRelative]
         else:
@@ -274,7 +276,7 @@ class ItemConvert(threading.Thread):
         # cmd = f""""{get_nadeo_importer_path()}" Item "{filepathRelative}" """ 
             
         
-        if(tm_props.LI_system != "Windows"):
+        if(get_system() != "Windows"):
             self.unix_test_create_TM_symlink()
 
         self.add_progress_step(f"""Command: {cmd}""")
@@ -303,7 +305,7 @@ class ItemConvert(threading.Thread):
         # ex: "NadeoImporter.exe" Item "/Items/myblock.Item.xml"
         cmd = []
         filepathRelative = ""
-        if(tm_props.LI_system == "Windows"):
+        if(get_system() == "Windows"):
             filepathRelative = self.xml_item_filepath_relative
             cmd = [get_nadeo_importer_path(), "Item", filepathRelative]
         else:
@@ -313,7 +315,7 @@ class ItemConvert(threading.Thread):
         # cmd = f""""{get_nadeo_importer_path()}" Item "{filepathRelative}" """ 
             
         
-        if(tm_props.LI_system != "Windows"):
+        if(get_system() != "Windows"):
             self.unix_test_create_TM_symlink()
 
         self.add_progress_step(f"""Command: {cmd}""")
