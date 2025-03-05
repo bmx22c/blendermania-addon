@@ -2281,3 +2281,15 @@ def load_image_into_blender(texpath: str) -> tuple:
 def add_indents(text: str, tab_count: int = 1) -> str:
     prefix = ("    "*tab_count)
     return prefix + text.replace("\n", "\n"+prefix)
+
+def get_system() -> str:
+    forceSystem = bpy.context.preferences.addons["blendermania-addon"].preferences.LI_forceSystem
+    system = bpy.context.preferences.addons["blendermania-addon"].preferences.LI_system
+
+    if(forceSystem):
+        return system
+    else:
+        if(os.name == "nt"):
+            return "Windows"
+        else:
+            return "Unix"

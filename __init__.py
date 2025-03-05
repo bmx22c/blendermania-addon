@@ -24,6 +24,31 @@ bl_info = {
     "category"      : "Generic",
 }
 
+class TM_PT_Settings_Preferences(bpy.types.AddonPreferences):
+    bl_idname = __name__
+
+    LI_forceSystem: BoolProperty(
+        name="Force system",
+        description="Force select a difference OS",
+        default=False
+    )
+
+    LI_system: bpy.props.EnumProperty(
+        name="System",
+        description="Select a different OS",
+        items=[
+            ('Windows', "Windows", ""),
+            ('Unix', "Unix", "")
+        ],
+        default='Windows'
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "LI_forceSystem")
+        if self.LI_forceSystem:
+            layout.prop(self, "LI_system")
+
 
 from .utils.Constants      import *
 from .utils.Descriptions   import *
@@ -255,6 +280,8 @@ def register():
     bpy.types.Scene.tm_props_itemxml_templates_ui     = EnumProperty(items=get_itemxml_template_names_enum)
     bpy.types.Scene.tm_props_itemxml_templates        = CollectionProperty(type=ItemXMLTemplate)
 
+    bpy.utils.register_class(TM_PT_Settings_Preferences)
+
 
     bpy.types.DATA_PT_EEVEE_light.append(draw_nightonly_option)
     bpy.types.Light.night_only          = BoolProperty(default=False)
@@ -319,7 +346,9 @@ def unregister():
     del bpy.types.Scene.tm_props_itemxml_templates_ui
     del bpy.types.Scene.tm_props_itemxml_templates
     # del bpy.types.Scene.tm_props_itemxml_templates
-    del bpy.types.Object.location_before 
+    del bpy.types.Object.location_before
+
+    bpy.utils.unregister_class(TM_PT_Settings_Preferences)
     
     bpy.types.DATA_PT_EEVEE_light.remove(draw_nightonly_option)
     bpy.types.VIEW3D_MT_add.remove(OT_ItemsCarsTemplates.add_menu_item)
@@ -360,10 +389,6 @@ def on_startup(dummy) -> None:
         tm_props.NU_DL_Progress         = 0
         tm_props.ST_DL_ProgressErrors   = ""
         tm_props.CB_DL_ProgressShow     = False
-        if(os.name == "nt"):
-            tm_props.LI_system = "Windows"
-        else:
-            tm_props.LI_system = "Linux"
 
         # so grid_subdivisions is editable
         bpy.context.scene.unit_settings.system = 'NONE'
