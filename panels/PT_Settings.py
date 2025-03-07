@@ -134,9 +134,24 @@ class TM_PT_Settings(Panel):
             # row = col.row(align=True)
             # row.prop(tm_props, "LI_programFilesx86", text="Program Files x86 folder")
 
-        nadeoini_invalid = draw_nadeoini_required_message(self)
-        if nadeoini_invalid:
-            return
+        if get_system() == "Windows":
+            nadeoini_invalid = draw_nadeoini_required_message(self)
+            if nadeoini_invalid:
+                return
+        
+        if get_system() == "Unix":
+            all_ok = True
+
+            nadeoini_invalid = draw_nadeoini_required_message(self)
+            if nadeoini_invalid:
+                all_ok = True
+            
+            compat_c_invalid = draw_compatc_required_message(self)
+            if compat_c_invalid:
+                all_ok = True
+
+            if not all_ok:
+                return
 
 
 class TM_PT_Settings_BlenderRelated(Panel):
@@ -214,9 +229,23 @@ class TM_PT_Settings_NadeoImporter(Panel):
         tm_props        = get_global_props()
         tm_props_pivots = get_pivot_props()
 
-        if not is_selected_nadeoini_file_name_ok():
-            draw_nadeoini_required_message(self)
-            return
+        if get_system() == "Windows":
+            if not is_selected_nadeoini_file_name_ok():
+                draw_nadeoini_required_message(self)
+                return
+        
+        if get_system() == "Unix":
+            all_ok = True
+            if not is_selected_nadeoini_file_name_ok():
+                draw_nadeoini_required_message(self)
+                all_ok = False
+
+            if not is_selected_compatc_folder_name_ok():
+                draw_compatc_required_message(self)
+                all_ok = False
+
+            if not all_ok:
+                return
 
         if is_selected_nadeoini_file_name_ok() and is_compat_c_needed_and_filled():
             op_row = layout.row()

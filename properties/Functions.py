@@ -172,7 +172,7 @@ def systemGotUpdated(self=None,context=None)->None:
 def computeFolders(self=None,context=None)->None:
     tm_props     = get_global_props()
     tm_props = tm_props
-    if(get_system() == "Windows" and tm_props.ST_compatData_driveC != ""):
+    if(get_system() == "Unix" and tm_props.ST_compatData_driveC != ""):
         root_folder = tm_props.ST_compatData_driveC
 
         PATH_PROGRAM_DATA      = os.path.join(root_folder, "ProgramData") + "/"

@@ -15,10 +15,12 @@ from ..operators.OT_Map_Manipulate import (
 )
 from ..utils.Functions import (
     draw_nadeoini_required_message,
+    draw_compatc_required_message,
     get_global_props,
     is_blendermania_dotnet_installed,
     is_game_maniaplanet,
     is_selected_nadeoini_file_name_ok,
+    is_selected_compatc_folder_name_ok,
     is_compat_c_needed_and_filled,
 )
 from ..utils.Constants import * 
