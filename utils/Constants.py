@@ -177,6 +177,8 @@ CHAR_TOP          = "↑"
 
 MSG_ERROR_ABSOLUTE_PATH_ONLY            = "Absolute path only!"
 MSG_ERROR_NADEO_INI_FILE_NOT_SELECTED   = "Select the Nadeo.ini file first!"
+MSG_ERROR_NADEO_INI_FILE_AND_COMPAT_C_FOLDER_NOT_SELECTED   = "Select the Nadeo.ini and compat_c folder first!"
+MSG_ERROR_COMPAT_C_FOLDER_NOT_SELECTED   = "Select the compat_c folder first!"
 MSG_ERROR_NADEO_INI_NOT_FOUND           = """Autofind failed, check "Help" """
 
 

@@ -36,10 +36,26 @@ def fix_slash(filepath: str) -> str:
     return filepath
 
 def is_file_existing(filepath: str) -> bool:
-    return os.path.isfile(filepath)
+    filepath = os.path.abspath(filepath)  # Get absolute path
+    parent, target = os.path.dirname(filepath), os.path.basename(filepath)
+
+    if not os.path.isdir(parent):  # Ensure parent directory exists
+        return False
+
+    # Check if a case-insensitive match exists and it's a file
+    return any(target.lower() == entry.lower() and os.path.isfile(os.path.join(parent, entry)) 
+               for entry in os.listdir(parent))
 
 def is_folder_existing(folderpath: str) -> bool:
-    return os.path.isdir(folderpath)
+    folderpath = os.path.abspath(folderpath)  # Get absolute path
+    parent, target = os.path.dirname(folderpath), os.path.basename(folderpath)
+
+    if not os.path.isdir(parent):  # Check if the parent directory exists
+        return False
+
+    # Check if a case-insensitive match exists
+    return target.lower() in (entry.lower() for entry in os.listdir(parent))
+    # return os.path.isdir(folderpath)
 
 def rename_folder(old: str, new: str) -> None:
     os.rename(old, new)
@@ -271,7 +287,7 @@ def parse_nadeo_ini_file() -> str:
             replace   = get_documents_path()
             from_value= ini_value.lower()
             new_docpath     = re.sub(search, replace, from_value, re.IGNORECASE)
-            path_tmuf       = re.sub("trackmania", "TrackMania2020", new_docpath, flags=re.IGNORECASE)
+            path_tmuf       = re.sub("Trackmania", "Trackmania2020", new_docpath, flags=re.IGNORECASE)
 
             new_docpath = fix_slash(new_docpath)
             path_tmuf   = fix_slash(path_tmuf)
@@ -450,6 +466,16 @@ def is_selected_nadeoini_file_name_ok() -> bool:
     return ini_path.lower().endswith(".ini")
 
 
+
+def is_selected_compatc_folder_name_ok() -> bool:
+    compat_c_path = ""
+    tm_props = get_global_props()
+
+    compat_c_path = str(tm_props.ST_compatData_driveC)
+
+    return compat_c_path != ""
+
+
 # * check later
 # def is_selected_nadeoini_file_existing(force_check:bool = False) -> bool:
 #     ini_path = ""
@@ -474,6 +500,17 @@ def draw_nadeoini_required_message(panel_instance: bpy.types.Panel) -> bool:
         row = panel_instance.layout.row()
         row.alert = True
         row.label(text=MSG_ERROR_NADEO_INI_FILE_NOT_SELECTED, icon=ICON_ERROR)
+
+    return should_warn
+
+def draw_compatc_required_message(panel_instance: bpy.types.Panel) -> bool:
+    """create a red error text in the given panel's layout"""
+    should_warn = False
+    if not is_selected_compatc_folder_name_ok():
+        should_warn = True
+        row = panel_instance.layout.row()
+        row.alert = True
+        row.label(text=MSG_ERROR_COMPAT_C_FOLDER_NOT_SELECTED, icon=ICON_ERROR)
 
     return should_warn
 
