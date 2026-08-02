@@ -7,6 +7,18 @@ from .Constants      import *
 from .Functions      import *
 
 
+DOTNET_RETURN_CODE_SUCCESS = 0
+DOTNET_RETURN_CODE_UNKNOWN_ERROR = 1
+DOTNET_RETURN_CODE_GBX_ERROR = 2
+DOTNET_RETURN_CODE_INVALID_PAYLOAD = 3
+
+DOTNET_RETURN_CODES = {
+    DOTNET_RETURN_CODE_SUCCESS: "Success",
+    DOTNET_RETURN_CODE_UNKNOWN_ERROR: "Blendermania_Dotnet.exe returned an unknown error.",
+    DOTNET_RETURN_CODE_GBX_ERROR: "Blendermania_Dotnet.exe encountered an error while processing the GBX file.",
+    DOTNET_RETURN_CODE_INVALID_PAYLOAD: "Blendermania_Dotnet.exe received an invalid payload path, perhaps file does not exist.",
+}
+
 DOTNET_BLOCKS_DIRECTION = (
     DOTNET_BLOCKS_DIRECTION_NORTH   := 0,
     DOTNET_BLOCKS_DIRECTION_EAST    := 1,
@@ -273,22 +285,26 @@ def run_place_mediatracker_clips_on_map(
 
 
 def _run_dotnet(command: str, payload: str) -> DotnetExecResult:
-    #print(payload)
-    dotnet = get_blendermania_dotnet_path()
-    args = [
-        dotnet,
+    dotnet_exe = get_blendermania_dotnet_path()
+
+    process = subprocess.Popen(args=[
+        dotnet_exe,
         command,
         payload.strip('"'),
-    ]
+    ])
 
     process = subprocess.Popen(args=args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     out, err = process.communicate()
-    if len(err) != 0:
-        return DotnetExecResult(message=err.decode("utf-8") , success=False)
     
-    res = out.decode("utf-8").strip()
-    if process.returncode != 0:
-        return DotnetExecResult(message="Unknown Error", success=False) if len(res) == 0 else res
+    out_msg = out.decode("utf-8").strip()
+    err_msg = err.decode("utf-8").strip()
 
-    return DotnetExecResult(message=res, success=True)
+    messages = out_msg + ("\n" + err_msg if len(err_msg) > 0 else "")
+
+    if process.returncode == DOTNET_RETURN_CODE_SUCCESS:
+        return DotnetExecResult(message=messages, success=True)
+    
+    messages = DOTNET_RETURN_CODES.get(process.returncode, "Unknown Error") + "\n" + messages
+
+    return DotnetExecResult(message=messages, success=False)

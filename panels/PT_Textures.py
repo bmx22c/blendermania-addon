@@ -1,4 +1,3 @@
-from asyncore import poll
 from pydoc import text
 import bpy
 from bpy.types import Panel

@@ -31,8 +31,7 @@ def _set_ST_materialAddName_when_select_link(self, context):
 
 class PannelsPropertyGroup(bpy.types.PropertyGroup):
     """general trackmania properties"""
-    LI_gameType                 : EnumProperty(  name="Game",    items=getGameTypes(),   update=gameTypeGotUpdated)
-    ST_compatData_driveC        : StringProperty(name="compatdata drive_c", description="Steam compatdata C drive folder", subtype="DIR_PATH",     update=computeFolders)
+    LI_gameType                 : EnumProperty(  name="Game",    items=getGameTypes(),   update=gameTypeGotUpdated, default=GAMETYPE_TRACKMANIA2020)
     ST_nadeoIniFile_MP          : StringProperty(name="",        subtype="FILE_PATH",    update=lambda s, c: updateINI("ST_nadeoIniFile_MP"), default=defaultINI("ST_nadeoIniFile_MP"))
     ST_nadeoIniFile_TM          : StringProperty(name="",        subtype="FILE_PATH",    update=lambda s, c: updateINI("ST_nadeoIniFile_TM"), default=defaultINI("ST_nadeoIniFile_TM"))
     ST_author                   : StringProperty(name="Author",  default="")
@@ -128,8 +127,12 @@ class PannelsPropertyGroup(bpy.types.PropertyGroup):
     CB_showConvertPanel          : BoolProperty(default=False,      update=redraw_panels)
     CB_stopAllNextConverts       : BoolProperty(default=False,      update=redraw_panels, name="Stop all next converts")
     CB_converting                : BoolProperty(default=False,      update=redraw_panels)
+    
+    # obsolete
     CB_convertMultiThreaded      : BoolProperty(default=False,      update=redraw_panels, description="Don't convert all at the same time (converts can be cancelled")
+    # obsolete
     CB_notifyPopupWhenDone       : BoolProperty(default=True,       name="Notify toast when done")
+    
     NU_convertDurationSinceStart : IntProperty(min=-1,              default=-1,   update=redraw_panels)
     NU_convertStartedAt          : IntProperty(min=-1,              default=-1,   update=redraw_panels)
     NU_currentConvertDuration    : IntProperty(min=0,               default=0,    update=redraw_panels)
@@ -188,18 +191,18 @@ class PannelsPropertyGroup(bpy.types.PropertyGroup):
     LI_xml_itemtype             : EnumProperty( name="Type",            items=getItemXMLType())
     LI_xml_waypointtype         : EnumProperty( name="Waypoint",        items=getWayPointVariations(), update=onWaypointUpdate)
     LI_xml_enviType             : EnumProperty( name="Envi",            items=getItemXMLCollections())
-    NU_xml_gridAndLeviX         : FloatProperty(name="Sync X",          default=8.0,  min=0, soft_max=256, step=100, update=updateGridAndLevi)
-    NU_xml_gridAndLeviY         : FloatProperty(name="Synx Y",          default=8.0,  min=0, soft_max=256, step=100, update=updateGridAndLevi)
-    NU_xml_gridAndLeviOffsetX   : FloatProperty(name="Sync X",          default=8.0,  min=0, soft_max=256, step=100, update=updateGridAndLevi)
-    NU_xml_gridAndLeviOffsetY   : FloatProperty(name="Synx Y",          default=8.0,  min=0, soft_max=256, step=100, update=updateGridAndLevi)
-    NU_xml_gridX                : FloatProperty(name="X Grid",          default=8.0,  min=0, soft_max=256, step=100)
-    NU_xml_gridXoffset          : FloatProperty(name="X Offset",        default=0.0,  min=0, soft_max=256, step=100)
-    NU_xml_gridY                : FloatProperty(name="Y Grid",          default=8.0,  min=0, soft_max=256, step=100)
-    NU_xml_gridYoffset          : FloatProperty(name="Y Offset",        default=0.0,  min=0, soft_max=256, step=100)
-    NU_xml_leviX                : FloatProperty(name="X Levitation",    default=8.0,  min=0, soft_max=256, step=100)
-    NU_xml_leviXoffset          : FloatProperty(name="X Offset",        default=0.0,  min=0, soft_max=256, step=100)
-    NU_xml_leviY                : FloatProperty(name="Y Levitation",    default=8.0,  min=0, soft_max=256, step=100)
-    NU_xml_leviYoffset          : FloatProperty(name="Y Offset",        default=0.0,  min=0, soft_max=256, step=100)
+    NU_xml_gridAndLeviX         : FloatProperty(name="Sync X",          default=8.0,       min=0,    soft_max=256, step=100, update=updateGridAndLevi)
+    NU_xml_gridAndLeviY         : FloatProperty(name="Synx Y",          default=8.0,       min=0,    soft_max=256, step=100, update=updateGridAndLevi)
+    NU_xml_gridAndLeviOffsetX   : FloatProperty(name="Sync X",          default=8.0,  soft_min=-256, soft_max=256, step=100, update=updateGridAndLevi)
+    NU_xml_gridAndLeviOffsetY   : FloatProperty(name="Synx Y",          default=8.0,  soft_min=-256, soft_max=256, step=100, update=updateGridAndLevi)
+    NU_xml_gridX                : FloatProperty(name="X Grid",          default=8.0,       min=0,    soft_max=256, step=100)
+    NU_xml_gridXoffset          : FloatProperty(name="X Offset",        default=0.0,  soft_min=-256, soft_max=256, step=100)
+    NU_xml_gridY                : FloatProperty(name="Y Grid",          default=8.0,       min=0,    soft_max=256, step=100)
+    NU_xml_gridYoffset          : FloatProperty(name="Y Offset",        default=0.0,  soft_min=-256, soft_max=256, step=100)
+    NU_xml_leviX                : FloatProperty(name="X Levitation",    default=8.0,       min=0,    soft_max=256, step=100)
+    NU_xml_leviXoffset          : FloatProperty(name="X Offset",        default=0.0,  soft_min=-256, soft_max=256, step=100)
+    NU_xml_leviY                : FloatProperty(name="Y Levitation",    default=8.0,       min=0,    soft_max=256, step=100)
+    NU_xml_leviYoffset          : FloatProperty(name="Y Offset",        default=0.0,  soft_min=-256, soft_max=256, step=100)
     CB_xml_ghostMode            : BoolProperty(name="Ghostmode",        default=True)
     CB_xml_autoRot              : BoolProperty(name="Auto Rotation",    default=False, description="Grid needs to be set to 0")
     CB_xml_oneAxisRot           : BoolProperty(name="OneAxisRot",       default=False)
