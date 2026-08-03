@@ -67,6 +67,7 @@ class PannelsPropertyGroup(bpy.types.PropertyGroup):
     CB_allow_dangerous_manual_manipulations: BoolProperty(default=False)
     LI_dangerous_manual_manipulation_mat: PointerProperty(type=bpy.types.Material)
     LI_dangerous_manual_manipulation_types: EnumProperty(items=get_dangerous_manual_manipulation_types())
+    ST_compatData_driveC: StringProperty(name="compatdata drive_c", subtype="DIR_PATH", default="")
 
 
     CB_addonUpdateDLRunning   : BoolProperty(       default=False,  update=redraw_panels)
