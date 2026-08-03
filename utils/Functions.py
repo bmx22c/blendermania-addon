@@ -228,7 +228,6 @@ def get_nadeo_init_data(setting: str) -> str:
     data = ""
     try: 
         data = nadeo_ini_settings[setting]
-        debug(data)
     
     except KeyError:
         debug(f"failed to find {setting} in nadeo ini, try parse now")
@@ -935,9 +934,7 @@ def get_game_doc_path() -> str:
     if platform.system() == "Windows":
         return get_nadeo_init_data(setting="UserDir")
     else:
-        test = get_nadeo_init_data(setting="UserDir").replace("{userdir}", "")
-        debug(test)
-        return test
+        return get_nadeo_init_data(setting="UserDir").replace("{userdir}", "")
 
 
 
