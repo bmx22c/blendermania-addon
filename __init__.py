@@ -104,7 +104,7 @@ from .panels.PT_Textures                import *
 from .panels.PT_VisibilitySelection     import *
 from .panels.PT_EditorTrails            import *
 
-# from .NICE.nice import NICE_register, NICE_unregister
+from .NICE.nice import NICE_register, NICE_unregister
 
 
 # owner of the object eventlistener
@@ -328,7 +328,7 @@ def register():
     bpy.app.handlers.depsgraph_update_post.append(listen_object_move)
     bpy.types.Object.location_before = FloatVectorProperty(name="old pos", subtype="TRANSLATION")
 
-    # NICE_register()
+    NICE_register()
     
 
 
@@ -366,7 +366,7 @@ def unregister():
     except:
         pass
 
-    # NICE_unregister()
+    NICE_unregister()
 
 @persistent
 def on_save(what, idontknow) -> None: # on quit?
