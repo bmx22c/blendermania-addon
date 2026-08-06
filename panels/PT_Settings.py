@@ -119,36 +119,38 @@ class TM_PT_Settings(Panel):
         row.enabled = True if not tm_props.CB_converting else False
         row.prop(tm_props, "LI_gameType", text="Game")
 
-        ini = "ST_nadeoIniFile_MP" if is_game_maniaplanet() else "ST_nadeoIniFile_TM"
-        row = col.row(align=True)
-        row.prop(tm_props, ini, text="Ini file")
-        row.operator("view3d.tm_autofindnadeoini", text="", icon=ICON_SEARCH)
+        if(get_system() == "Unix"):
+            row = col.row(align=True)
+            split = row.split(factor=0.5)
+            split.label(text="compatdata drive_c:")
+            split.prop(tm_props, "ST_compatData_driveC", text="")
+
+        if (get_system() == "Windows") or (get_system() == "Unix" and tm_props.ST_compatData_driveC != ""):
+            ini = "ST_nadeoIniFile_MP" if is_game_maniaplanet() else "ST_nadeoIniFile_TM"
+            row = col.row(align=True)
+            row.prop(tm_props, ini, text="Ini file")
+            row.operator("view3d.tm_autofindnadeoini", text="", icon=ICON_SEARCH)
 
         row = col.row(align=True)
         row.enabled = True if not tm_props.CB_converting else False
 
-        if(get_system() == "Unix"):
-            row = col.row(align=True)
-            row.prop(tm_props, "ST_compatData_driveC", text="compatdata drive_c")
 
-            # row = col.row(align=True)
-            # row.prop(tm_props, "LI_programFilesx86", text="Program Files x86 folder")
-
-        if get_system() == "Windows":
+        if (get_system() == "Windows") or (get_system() == "Unix" and tm_props.ST_compatData_driveC != ""):
             nadeoini_invalid = draw_nadeoini_required_message(self)
             if nadeoini_invalid:
                 return
         
         if get_system() == "Unix":
             all_ok = True
-
-            nadeoini_invalid = draw_nadeoini_required_message(self)
-            if nadeoini_invalid:
-                all_ok = True
             
             compat_c_invalid = draw_compatc_required_message(self)
             if compat_c_invalid:
                 all_ok = True
+
+            if tm_props.ST_compatData_driveC != "":
+                nadeoini_invalid = draw_nadeoini_required_message(self)
+                if nadeoini_invalid:
+                    all_ok = True
 
             if not all_ok:
                 return
