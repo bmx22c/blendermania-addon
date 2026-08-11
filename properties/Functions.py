@@ -105,6 +105,10 @@ def updateINI(prop) -> None:
     except AttributeError:
         pass # debug("Error trying to change settings related to game type")
 
+def updateCompatDataDriveC() -> None:
+    debug("Reset Nadeo INI settings.")
+    reset_nadeoini_settings()
+
 
 
 def defaultINI(prop) -> str:

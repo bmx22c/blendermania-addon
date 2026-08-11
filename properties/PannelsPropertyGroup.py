@@ -32,6 +32,7 @@ def _set_ST_materialAddName_when_select_link(self, context):
 class PannelsPropertyGroup(bpy.types.PropertyGroup):
     """general trackmania properties"""
     LI_gameType                 : EnumProperty(  name="Game",    items=getGameTypes(),   update=gameTypeGotUpdated, default=GAMETYPE_TRACKMANIA2020)
+    ST_compatData_driveC        : StringProperty(name="compatdata drive_c", subtype="DIR_PATH", update=lambda s, c: updateCompatDataDriveC(), default="")
     ST_nadeoIniFile_MP          : StringProperty(name="",        subtype="FILE_PATH",    update=lambda s, c: updateINI("ST_nadeoIniFile_MP"), default=defaultINI("ST_nadeoIniFile_MP"))
     ST_nadeoIniFile_TM          : StringProperty(name="",        subtype="FILE_PATH",    update=lambda s, c: updateINI("ST_nadeoIniFile_TM"), default=defaultINI("ST_nadeoIniFile_TM"))
     ST_author                   : StringProperty(name="Author",  default="")
@@ -67,7 +68,6 @@ class PannelsPropertyGroup(bpy.types.PropertyGroup):
     CB_allow_dangerous_manual_manipulations: BoolProperty(default=False)
     LI_dangerous_manual_manipulation_mat: PointerProperty(type=bpy.types.Material)
     LI_dangerous_manual_manipulation_types: EnumProperty(items=get_dangerous_manual_manipulation_types())
-    ST_compatData_driveC: StringProperty(name="compatdata drive_c", subtype="DIR_PATH", default="")
 
 
     CB_addonUpdateDLRunning   : BoolProperty(       default=False,  update=redraw_panels)

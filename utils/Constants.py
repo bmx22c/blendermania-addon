@@ -303,12 +303,6 @@ GAMETYPE_NAMES = (
     GAMETYPE_MANIAPLANET    := "ManiaPlanet",
 )
 
-SYSTEM_NAMES = (
-    SYSTEM_WINDOWS  := "Windows",
-    SYSTEM_LINUX    := "Linux",
-    SYSTEM_MACOS    := "MacOS",
-)
-
 
 
 
