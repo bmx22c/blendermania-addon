@@ -66,21 +66,37 @@ def make_release_zip():
         if LOCAL:
             shutil.copytree("./", tmpdirname, dirs_exist_ok=True)
         else:
-            # clone the repo
-            subprocess.run(
-                [
-                    "git",
-                    "clone",
-                    "--single-branch",
-                    "--branch",
-                    "master",
-                    "--recurse-submodules",
-                    "https://github.com/skyslide22/blendermania-addon.git",
-                    tmpdirname,
-                ],
-                shell=True,
-                check=True,
-            )
+            if os.name == 'nt':
+                # clone the repo
+                subprocess.run(
+                    [
+                        "git",
+                        "clone",
+                        "--single-branch",
+                        "--branch",
+                        "linux_support",
+                        "--recurse-submodules",
+                        "https://github.com/bmx22c/blendermania-addon.git",
+                        tmpdirname,
+                    ],
+                    shell=True,
+                    check=True,
+                )
+            else:
+                # clone the repo
+                subprocess.run(
+                    [
+                        "git",
+                        "clone",
+                        "--single-branch",
+                        "--branch",
+                        "linux_support",
+                        "--recurse-submodules",
+                        "https://github.com/bmx22c/blendermania-addon.git",
+                        tmpdirname,
+                    ],
+                    check=True,
+                )
 
         # get release version and clean existing zip
         release_filename = get_release_filename(tmpdirname)
